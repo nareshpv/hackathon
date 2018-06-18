@@ -1,5 +1,8 @@
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,14 +23,7 @@ public class HackathonUtil {
 				JSONArray jsonList = (JSONArray) obj;
 				for (Object jsonObj : jsonList) {
 					JSONObject jsonObject = (JSONObject) jsonObj;
-					String email = (String) jsonObject.get("email");
-					String phone = (String) jsonObject.get("phone");
 					String acct = (String) jsonObject.get("account");
-
-					// Add the values to the jsonObject
-					jsonObject.put("email", email);
-					jsonObject.put("phone", phone);
-					jsonObject.put("account", acct);
 
 					if (account.equals(acct)) {
 						jsonObject.put(type, value);
@@ -81,6 +77,35 @@ public class HackathonUtil {
 		//return false if nothing matches the input
 		else return false;
 		
+	}
+	
+	public static void sendSMS(String phoneNumber,String msg) {
+		HttpURLConnection uc = null;
+		try {
+			String username = "pvnb4u@gmail.com";
+			String hash = "1aiqjtG9mJs-gT8IoarhAugoS25ZKpf01GM7DbdILI";
+			String test = "0";
+
+			String sender = "TXTLCL"; // This is who the message appears to be from.
+
+			String requestUrl = "http://api.textlocal.in/send/?" + "username=" + URLEncoder.encode(username, "UTF-8")
+					+ "&hash=" + URLEncoder.encode(hash, "UTF-8") + "&message=" + URLEncoder.encode(msg, "UTF-8")
+					+ "&sender=" + URLEncoder.encode(sender, "UTF-8") + "&numbers="
+					+ URLEncoder.encode(phoneNumber, "UTF-8") + "&test=" + URLEncoder.encode(test, "UTF-8");
+
+			URL url = new URL(requestUrl);
+			uc = (HttpURLConnection) url.openConnection();
+
+			System.out.println("Response: "+uc.getResponseMessage());
+
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+
+		}
+		finally {
+			uc.disconnect();
+		}
+
 	}
 
 }
